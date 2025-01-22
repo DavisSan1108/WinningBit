@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  DrawerLayoutAndroid,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons';
@@ -55,119 +54,86 @@ export default function HomeScreen({ navigation }: any) {
     },
   ];
 
-  const drawerRef = useRef<DrawerLayoutAndroid>(null);
-
-  const drawerContent = () => (
-    <View style={{ flex: 1, padding: 16, backgroundColor: '#fff' }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Menú</Text>
-      <TouchableOpacity
-        onPress={() => {
-          drawerRef.current?.closeDrawer();
-          navigation.navigate('Home');
-        }}
-        style={{ paddingVertical: 10 }}
-      >
-        <Text style={{ fontSize: 16 }}>Inicio</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          drawerRef.current?.closeDrawer();
-          navigation.navigate('MyAuctions');
-        }}
-        style={{ paddingVertical: 10 }}
-      >
-        <Text style={{ fontSize: 16 }}>Mis Subastas</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
-    <DrawerLayoutAndroid
-      ref={drawerRef}
-      drawerWidth={250}
-      drawerPosition="right"
-      renderNavigationView={drawerContent}
-    >
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>WinningBid</Text>
-          <TouchableOpacity onPress={() => drawerRef.current?.openDrawer()}>
-            <Ionicons name="menu" size={24} color="#1a3b6e" />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>WinningBid</Text>
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <Ionicons name="menu" size={24} color="#1a3b6e" />
+        </TouchableOpacity>
+      </View>
 
-        {/* Search */}
-        <View style={styles.searchContainer}>
-          <MaterialIcons name="search" size={20} color="#a0a0a0" style={styles.searchIcon} />
-          <TextInput placeholder="Buscar ..." style={styles.searchInput} />
-        </View>
+      {/* Search */}
+      <View style={styles.searchContainer}>
+        <MaterialIcons name="search" size={20} color="#a0a0a0" style={styles.searchIcon} />
+        <TextInput placeholder="Buscar ..." style={styles.searchInput} />
+      </View>
 
-        {/* Main Content */}
-        <ScrollView contentContainerStyle={styles.mainContent}>
-          <Text style={styles.sectionTitle}>Subastas Activas</Text>
+      {/* Main Content */}
+      <ScrollView contentContainerStyle={styles.mainContent}>
+        <Text style={styles.sectionTitle}>Subastas Activas</Text>
 
-          {/* Filters */}
-          <View style={styles.filtersContainer}>
-            <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={selectedType}
-                style={styles.picker}
-                onValueChange={(itemValue: string) => setSelectedType(itemValue)}
-              >
-                <Picker.Item label="Tipo" value="" />
-                <Picker.Item label="Electrónicos" value="electronics" />
-                <Picker.Item label="Deporte" value="sport" />
-              </Picker>
-            </View>
-            <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={selectedCategory}
-                style={styles.picker}
-                onValueChange={(itemValue: string) => setSelectedCategory(itemValue)}
-              >
-                <Picker.Item label="Categoría" value="" />
-                <Picker.Item label="Gaming" value="gaming" />
-                <Picker.Item label="Relojes" value="watches" />
-              </Picker>
-            </View>
+        {/* Filters */}
+        <View style={styles.filtersContainer}>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={selectedType}
+              style={styles.picker}
+              onValueChange={(itemValue: string) => setSelectedType(itemValue)}
+            >
+              <Picker.Item label="Tipo" value="" />
+              <Picker.Item label="Electrónicos" value="electronics" />
+              <Picker.Item label="Deporte" value="sport" />
+            </Picker>
           </View>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={selectedCategory}
+              style={styles.picker}
+              onValueChange={(itemValue: string) => setSelectedCategory(itemValue)}
+            >
+              <Picker.Item label="Categoría" value="" />
+              <Picker.Item label="Gaming" value="gaming" />
+              <Picker.Item label="Relojes" value="watches" />
+            </Picker>
+          </View>
+        </View>
 
-          {/* Product Cards */}
-          {products.map((product) => (
-            <View key={product.id} style={styles.card}>
-              <Image source={product.image} style={styles.cardImage} />
-              <View style={styles.cardDetails}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>{product.name}</Text>
-                  <TouchableOpacity>
-                    <FontAwesome name="heart-o" size={20} color="#a0a0a0" />
+        {/* Product Cards */}
+        {products.map((product) => (
+          <View key={product.id} style={styles.card}>
+            <Image source={product.image} style={styles.cardImage} />
+            <View style={styles.cardDetails}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>{product.name}</Text>
+                <TouchableOpacity>
+                  <FontAwesome name="heart-o" size={20} color="#a0a0a0" />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.cardDescription}>{product.description}</Text>
+              <View style={styles.cardFooter}>
+                <Text style={styles.cardPrice}>Precio actual: {product.price}</Text>
+                <Text style={styles.cardDate}>
+                  {product.date} - {product.time}
+                </Text>
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={styles.viewButton}
+                    onPress={() => navigation.navigate('ProductDetails', { product })}
+                  >
+                    <Text style={styles.viewButtonText}>Ver</Text>
                   </TouchableOpacity>
-                </View>
-                <Text style={styles.cardDescription}>{product.description}</Text>
-                <View style={styles.cardFooter}>
-                  <Text style={styles.cardPrice}>Precio actual: {product.price}</Text>
-                  <Text style={styles.cardDate}>
-                    {product.date} - {product.time}
-                  </Text>
-                  <View style={styles.actionButtons}>
-                    <TouchableOpacity
-                      style={styles.viewButton}
-                      onPress={() => navigation.navigate('ProductDetails', { product })}
-                    >
-                      <Text style={styles.viewButtonText}>Ver</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.bidButton}>
-                      <Text style={styles.bidButtonText}>Subastar</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity style={styles.bidButton}>
+                    <Text style={styles.bidButtonText}>Subastar</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
-          ))}
-        </ScrollView>
-      </View>
-    </DrawerLayoutAndroid>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -238,17 +204,11 @@ const styles = StyleSheet.create({
     height: 48,
     fontSize: 16,
     color: '#1a3b6e',
-    textAlign: 'center',
-    textAlignVertical: 'center',
   },
   card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
     marginBottom: 16,
     padding: 16,
   },
@@ -317,4 +277,3 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
-
